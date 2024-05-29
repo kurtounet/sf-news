@@ -12,7 +12,13 @@ class IndexController extends AbstractController
     public function index(): Response
     {
         return $this->render('index/index.html.twig', [
-            'controller_name' => 'IndexController',
+            'controller_name' => 'Mostafa',
         ]);
+    }
+
+    #[Route('/about', name: 'about_page')]
+    public function about(): Response
+    {
+        return $this->render('index/about.html.twig');
     }
 }
