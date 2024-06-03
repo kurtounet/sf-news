@@ -8,7 +8,9 @@
   <h1 class="text-4xl text-center">Catégories</h1>
 
   {% for category in categories %}
-    <p>{{ category.name }}</p>
+    <p>
+      <a class="hover:underline" href="{{ path('category_item', { id: category.id }) }}">{{ category.name }}</a> ({{ category.articles|length }} articles)
+    </p>
   {% else %}
     <p>Aucune catégorie trouvée</p>
   {% endfor %}
