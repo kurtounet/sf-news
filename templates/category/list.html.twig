@@ -6,4 +6,10 @@
 
 {% block body %}
   <h1 class="text-4xl text-center">Catégories</h1>
+
+  {% for category in categories %}
+    <p>{{ category.name }}</p>
+  {% else %}
+    <p>Aucune catégorie trouvée</p>
+  {% endfor %}
 {% endblock %}

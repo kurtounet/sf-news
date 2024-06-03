@@ -10,13 +10,16 @@ use Symfony\Component\Routing\Attribute\Route;
 class CategoryController extends AbstractController
 {
     #[Route('/categories', name: 'categories_list')]
-    public function list(CategoryRepository $categoryRepository): Response
+    public function list(CategoryRepository $categories): Response
     {
         // Récupérer toutes mes catégories
         // Puis les envoyer à la vue pour un rendu
-        $categories = $categoryRepository->findAll();
+        $categories = $categories->findAll();
         // dd($categories);
 
-        return $this->render('category/list.html.twig');
+        return $this->render(
+            'category/list.html.twig',
+            ['categories' => $categories]
+        );
     }
 }
