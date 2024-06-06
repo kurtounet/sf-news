@@ -34,6 +34,8 @@ class ArticleController extends AbstractController
             $em->persist($article);
             $em->flush();
 
+            $this->addFlash('success', 'Article enregistré');
+
             return $this->redirectToRoute('articles_list');
         }
 
