@@ -9,7 +9,8 @@ use Symfony\Component\Mime\Email;
 class EmailNotification
 {
     public function __construct(
-        private MailerInterface $mailer
+        private MailerInterface $mailer,
+        private string $adminEmail
     ) {
     }
 
@@ -17,7 +18,7 @@ class EmailNotification
         NewsletterEmail $newEmail
     ): void {
         $email = (new Email())
-            ->from('admin@hbcorp.com')
+            ->from($this->adminEmail)
             ->to($newEmail->getEmail())
             ->subject('Inscription à la newsletter')
             ->text('Votre email ' . $newEmail->getEmail() . ' a bien été enregistré, merci');
