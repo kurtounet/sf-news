@@ -4,16 +4,23 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private const NB_ARTICLES = 40;
 
     private const CATEGORIES = ["PHP", "Symfony", "JS", "Typescript", "React", "Angular", "Rust"];
+
+    public function __construct(
+        private UserPasswordHasherInterface $hasher
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -40,6 +47,21 @@ class AppFixtures extends Fixture
 
             $manager->persist($article);
         }
+
+        $user = new User();
+        $user
+            ->setEmail('user@bobby.net')
+            ->setPassword($this->hasher->hashPassword($user, 'bobby'));
+
+        $manager->persist($user);
+
+        $admin = new User();
+        $admin
+            ->setEmail('admin@bobby.net')
+            ->setPassword($this->hasher->hashPassword($admin, 'admin'))
+            ->setRoles(['ROLE_ADMIN']);
+
+        $manager->persist($admin);
 
         // Envoyer les modifications en base de données
         $manager->flush();
