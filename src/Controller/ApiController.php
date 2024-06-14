@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[Route('/api')]
 class ApiController extends AbstractController
@@ -17,6 +18,24 @@ class ApiController extends AbstractController
         return $this->json(
             $articleRepository->findAll(),
             context: ['groups' => ['articles:read']]
+        );
+    }
+
+    #[Route('/articles/{id}', name: 'api_article_item')]
+    public function article(Article $article): JsonResponse
+    {
+        return $this->json(
+            $article,
+            context: ['groups' => ['articles:read:item']]
+        );
+    }
+
+    #[Route('/categories', name: 'api_categories')]
+    public function categories(CategoryRepository $categoryRepository): JsonResponse
+    {
+        return $this->json(
+            $categoryRepository->findAll(),
+            context: ['groups' => ['categories:read']]
         );
     }
 }
