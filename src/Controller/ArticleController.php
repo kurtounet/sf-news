@@ -43,4 +43,10 @@ class ArticleController extends AbstractController
             'articleForm' => $form
         ]);
     }
+
+    #[Route('/article/{id}', name: 'article_item')]
+    public function item(Article $article): Response
+    {
+        return $this->render('article/item.html.twig', ['article' => $article]);
+    }
 }
