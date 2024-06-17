@@ -18,11 +18,6 @@ class AppFixtures extends Fixture
 
     private const CATEGORIES = ["PHP", "Symfony", "JS", "Typescript", "React", "Angular", "Rust"];
 
-    public function __construct(
-        private UserPasswordHasherInterface $hasher
-    ) {
-    }
-
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('zh_TW');
@@ -52,14 +47,14 @@ class AppFixtures extends Fixture
         $user = new User();
         $user
             ->setEmail('user@bobby.net')
-            ->setPassword($this->hasher->hashPassword($user, 'bobby'));
+            ->setPassword('bobby');
 
         $manager->persist($user);
 
         $admin = new User();
         $admin
             ->setEmail('admin@bobby.net')
-            ->setPassword($this->hasher->hashPassword($admin, 'admin'))
+            ->setPassword('admin')
             ->setRoles(['ROLE_ADMIN']);
 
         $manager->persist($admin);
