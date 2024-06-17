@@ -59,7 +59,7 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
             // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
 
-        return new JsonResponse($data, Response::HTTP_FORBIDDEN);
+        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     // public function start(Request $request, AuthenticationException $authException = null): Response
