@@ -31,3 +31,11 @@ services:
     # App\Newsletter\EmailNotification:
     #     arguments:
     #         $adminEmail: '%app.admin_email%'
+
+    App\EventListener\AddCustomHeaderListener:
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: kernel.response,
+                method: "addHeader"
+            }
