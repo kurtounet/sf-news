@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\ApiToken;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Entity\User;
@@ -62,6 +63,11 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN']);
 
         $manager->persist($admin);
+
+        $token = new ApiToken();
+        $token->setToken('MlXbRwjGc3muZMqEVjIfmoo6X');
+
+        $manager->persist($token);
 
         // Envoyer les modifications en base de données
         $manager->flush();

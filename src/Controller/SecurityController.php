@@ -23,7 +23,6 @@ class SecurityController extends AbstractController
             'error' => $error,
         ]);
     }
-
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
