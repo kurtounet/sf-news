@@ -33,11 +33,10 @@ services:
     #     arguments:
     #         $adminEmail: '%app.admin_email%'
 
-    # --- Configuration des évenements ---
     App\EventListener\AddCustomHeaderListener:
         tags:
-            - { 
-                name: 'kernel.event_listener', 
-                event: 'kernel.response', 
-                method: 'addHeader' 
+            - {
+                name: kernel.event_listener,
+                event: kernel.response,
+                method: "addHeader"
             }

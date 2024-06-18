@@ -8,7 +8,7 @@ use App\Form\NewsletterType;
 use App\Newsletter\EmailNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,8 +19,7 @@ class NewsletterController extends AbstractController
     public function subscribe(
         Request $request,
         EntityManagerInterface $em,
-        EventDispatcher $dispatcher,
-        EmailNotification $emailNotification
+        EventDispatcherInterface $dispatcher
     ): Response {
         $newsletterEmail = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletterEmail);
@@ -30,11 +29,11 @@ class NewsletterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($newsletterEmail);
             $em->flush();
+
             $dispatcher->dispatch(
                 new NewsletterRegisteredEvent($newsletterEmail),
                 NewsletterRegisteredEvent::NAME
             );
-            //$emailNotification->sendConfirmationEmail($newsletterEmail);
 
             return $this->redirectToRoute('newsletter_thanks');
         }

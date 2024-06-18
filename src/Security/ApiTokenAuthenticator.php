@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class ApiTokenAuthenticator extends AbstractAuthenticator
 {
-    private const TOKEN = 'X-API-TOKEN';
+    private const TOKEN_NAME = 'X-API-TOKEN';
     /**
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning `false` will cause this authenticator
@@ -26,21 +26,18 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return $request->headers->has(self::TOKEN);
+        return $request->headers->has(self::TOKEN_NAME);
     }
 
     public function authenticate(Request $request): Passport
     {
-        $apiToken = $request->headers->get(self::TOKEN);
+        $apiToken = $request->headers->get(self::TOKEN_NAME);
+
         if (null === $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
-
-        // implement your own logic to get the user identifier from `$apiToken`
-        // e.g. by looking up a user in the database using its API key
-        // $userIdentifier = /** ... */;
 
         return new SelfValidatingPassport(new UserBadge($apiToken));
     }
@@ -48,7 +45,6 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         // on success, let the request continue
-        // 
         return null;
     }
 
@@ -56,12 +52,12 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
     {
         $data = [
             // you may want to customize or obfuscate the message first
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
+            // 'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
+            'message' => 'Authentication failed'
 
             // or to translate this message
             // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
-        // Code 403 "Forbidden" -> controle de l'acces au serveur 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
