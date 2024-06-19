@@ -22,7 +22,6 @@ class NewsletterController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         EventDispatcherInterface $dispatcher,
-        SpamCheckerApi $spamChecker
     ): Response {
 
 
@@ -32,19 +31,15 @@ class NewsletterController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($spamChecker->isSpam($newsletterEmail->getEmail())) {
-                $form->addError(new FormError("L'email est un spam"));
-            } else {
-                $em->persist($newsletterEmail);
-                $em->flush();
+            $em->persist($newsletterEmail);
+            $em->flush();
 
-                $dispatcher->dispatch(
-                    new NewsletterRegisteredEvent($newsletterEmail),
-                    NewsletterRegisteredEvent::NAME
-                );
+            $dispatcher->dispatch(
+                new NewsletterRegisteredEvent($newsletterEmail),
+                NewsletterRegisteredEvent::NAME
+            );
 
-                return $this->redirectToRoute('newsletter_thanks');
-            }
+            return $this->redirectToRoute('newsletter_thanks');
         }
         $spam = 'Spam';
         return $this->render('newsletter/subscribe.html.twig', [

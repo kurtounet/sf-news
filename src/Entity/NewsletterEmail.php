@@ -20,7 +20,7 @@ class NewsletterEmail
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "L'email est obligatoire")]
     #[Assert\Email(message: "L'email n'est pas valide")]
-   
+    #[IsNotSpam]
     private ?string $email = null;
 
     public function getId(): ?int
