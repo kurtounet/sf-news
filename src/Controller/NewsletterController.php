@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\NewsletterEmail;
 use App\Event\NewsletterRegisteredEvent;
 use App\Form\NewsletterType;
-use CallSpamCheckerService;
+use App\Service\SpamCheckerApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,7 +22,7 @@ class NewsletterController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         EventDispatcherInterface $dispatcher,
-        CallSpamCheckerService $spamChecker
+        SpamCheckerApi $spamChecker
     ): Response {
 
 
@@ -32,11 +32,7 @@ class NewsletterController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-
-
-
-            if ($spamChecker->isSpam($form->getData()->getEmail()) === 'spam') {
+            if ($spamChecker->isSpam($newsletterEmail->getEmail())) {
                 $form->addError(new FormError("L'email est un spam"));
             } else {
                 $em->persist($newsletterEmail);
