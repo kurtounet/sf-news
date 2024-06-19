@@ -6,6 +6,7 @@ use App\Entity\NewsletterEmail;
 use App\Event\NewsletterRegisteredEvent;
 use App\Form\NewsletterType;
 use App\Newsletter\EmailNotification;
+use CallSpamCheckerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -19,27 +20,35 @@ class NewsletterController extends AbstractController
     public function subscribe(
         Request $request,
         EntityManagerInterface $em,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        CallSpamCheckerService $SpamCheckerService
     ): Response {
+
+
+
         $newsletterEmail = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletterEmail);
-
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($newsletterEmail);
-            $em->flush();
+        $spam = $SpamCheckerService->check($form->getData()->getEmail());
 
-            $dispatcher->dispatch(
-                new NewsletterRegisteredEvent($newsletterEmail),
-                NewsletterRegisteredEvent::NAME
-            );
+        if (!$spam) {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em->persist($newsletterEmail);
+                $em->flush();
 
-            return $this->redirectToRoute('newsletter_thanks');
+                $dispatcher->dispatch(
+                    new NewsletterRegisteredEvent($newsletterEmail),
+                    NewsletterRegisteredEvent::NAME
+                );
+
+                return $this->redirectToRoute('newsletter_thanks');
+            }
         }
 
         return $this->render('newsletter/subscribe.html.twig', [
-            'newsletterForm' => $form
+            'newsletterForm' => $form,
+            'spam' => $spam
         ]);
     }
 

@@ -35,33 +35,33 @@ class NewsletterRegisteredSubscriber implements EventSubscriberInterface
             ->username('Human Botster')
             ->addEmbed(
                 (new DiscordEmbed())
-                ->color(2021216)
-                ->title('Nouvel email dans la newsletter !')
-                ->thumbnail((new DiscordMediaEmbedObject())
-                ->url('https://ld-web.github.io/hb-sf-pe9-course/img/logo.png'))
-                ->addField(
-                    (new DiscordFieldEmbedObject())
-                    ->name('Track')
-                    ->value('[Out of Mind](https://open.spotify.com/track/4tLh6ilwgHAWnkui4hAR3p)')
-                    ->inline(true)
-                )
-                ->addField(
-                    (new DiscordFieldEmbedObject())
-                    ->name('Email')
-                    ->value($email->getEmail())
-                    ->inline(true)
-                )
-                ->addField(
-                    (new DiscordFieldEmbedObject())
-                    ->name('Artist')
-                    ->value('DIIV')
-                    ->inline(true)
-                )
-                ->footer(
-                    (new DiscordFooterEmbedObject())
-                    ->text('Human Booster - 2024')
-                    ->iconUrl('https://ld-web.github.io/hb-sf-pe9-course/img/logo.png')
-                )
+                    ->color(2021216)
+                    ->title('Nouvel email dans la newsletter !')
+                    ->thumbnail((new DiscordMediaEmbedObject())
+                        ->url('https://ld-web.github.io/hb-sf-pe9-course/img/logo.png'))
+                    ->addField(
+                        (new DiscordFieldEmbedObject())
+                            ->name('Track')
+                            ->value('[Out of Mind](https://open.spotify.com/track/4tLh6ilwgHAWnkui4hAR3p)')
+                            ->inline(true)
+                    )
+                    ->addField(
+                        (new DiscordFieldEmbedObject())
+                            ->name('Email')
+                            ->value($email->getEmail())
+                            ->inline(true)
+                    )
+                    ->addField(
+                        (new DiscordFieldEmbedObject())
+                            ->name('Artist')
+                            ->value('DIIV')
+                            ->inline(true)
+                    )
+                    ->footer(
+                        (new DiscordFooterEmbedObject())
+                            ->text('Human Booster - 2024')
+                            ->iconUrl('https://ld-web.github.io/hb-sf-pe9-course/img/logo.png')
+                    )
             )
         ;
 
