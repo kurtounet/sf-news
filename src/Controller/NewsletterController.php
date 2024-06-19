@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\Entity\NewsletterEmail;
 use App\Event\NewsletterRegisteredEvent;
 use App\Form\NewsletterType;
-use App\Newsletter\EmailNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class NewsletterController extends AbstractController
 {
@@ -19,7 +20,8 @@ class NewsletterController extends AbstractController
     public function subscribe(
         Request $request,
         EntityManagerInterface $em,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        HttpClientInterface $spamChecker
     ): Response {
         $newsletterEmail = new NewsletterEmail();
         $form = $this->createForm(NewsletterType::class, $newsletterEmail);
@@ -27,15 +29,25 @@ class NewsletterController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($newsletterEmail);
-            $em->flush();
+            $response = $spamChecker->request('POST', '/api/check', [
+                'json' => ['email' => $newsletterEmail->getEmail()]
+            ]);
 
-            $dispatcher->dispatch(
-                new NewsletterRegisteredEvent($newsletterEmail),
-                NewsletterRegisteredEvent::NAME
-            );
+            $resContent = $response->toArray();
 
-            return $this->redirectToRoute('newsletter_thanks');
+            if ($resContent['result'] === 'spam') {
+                $form->addError(new FormError("L'email est un spam"));
+            } else {
+                $em->persist($newsletterEmail);
+                $em->flush();
+
+                $dispatcher->dispatch(
+                    new NewsletterRegisteredEvent($newsletterEmail),
+                    NewsletterRegisteredEvent::NAME
+                );
+
+                return $this->redirectToRoute('newsletter_thanks');
+            }
         }
 
         return $this->render('newsletter/subscribe.html.twig', [
