@@ -51,7 +51,7 @@ class NewsletterController extends AbstractController
                 return $this->redirectToRoute('newsletter_thanks');
             }
         }
-
+        $spam = 'Spam';
         return $this->render('newsletter/subscribe.html.twig', [
             'newsletterForm' => $form,
             'spam' => $spam
